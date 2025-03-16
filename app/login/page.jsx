@@ -1,11 +1,40 @@
+'use client';
+
 import Header from "@/components/header";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function LoginPage() {
+
+  const router = useRouter();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username, password }),
+    });
+
+    if (res.status === 200) {
+      router.push('/account');
+    } 
+
+    else {
+     alert('Invalid credentials');
+    }
+  }
+
   return (
     <>
       <Header />
       <div className="flex items-center justify-center py-[100px] bg-gray-100">
-        <form className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+        <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
           <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
           <div className="mb-4">
             <label
@@ -15,6 +44,7 @@ export default function LoginPage() {
               Username
             </label>
             <input
+            onChange={(e) => setUsername(e.target.value)}
               name="username"
               id="username"
               type="text"
@@ -29,6 +59,7 @@ export default function LoginPage() {
               Password
             </label>
             <input
+            onChange={(e) => setPassword(e.target.value)}
               name="password"
               id="password"
               type="password"
